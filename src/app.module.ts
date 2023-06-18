@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config'
-import { MongooseModule } from '@nestjs/mongoose'
+import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './users/user.module';
+import { RequestModule } from './Requests/request.module';
 
 @Module({
   imports: [
@@ -15,7 +16,9 @@ import { UserModule } from './users/user.module';
         useUnifiedTopology: true,
       }),
     }),
+   
     UserModule,
+    RequestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

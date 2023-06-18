@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.model';
 import { Model } from 'mongoose';
@@ -16,50 +16,62 @@ export class UserService {
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
       return false;
-    }else{
-        const newUser = new this.userModel({
-          name,
-          email,
-          password,
-          role,
-        });
-        if (name === "" || email === "" || password === "" || role === "") {
-          return `Invalid User Details`;
-        } else {
-          const createdUser = await newUser.save();
-          const token = this.generateToken(createdUser.id);
-          return { id: createdUser.id, token };
-        }
+    } else {
+      const newUser = new this.userModel({
+        name,
+        email,
+        password,
+        role,
+      });
+      if (name === '' || email === '' || password === '' || role === '') {
+        return `Invalid User Details`;
+      } else {
+        const createdUser = await newUser.save();
+        const token = this.generateToken(createdUser.id);
+        return { id: createdUser.id, token };
+      }
     }
   }
 
-  async login(email: string, password: string): Promise<boolean | { id: string, token: string }> {
+  async login(email: string, password: string): Promise<boolean | { id: string; token: string }> {
     const user = await this.userModel.findOne({ email });
     if (!user || user.password !== password) {
-      return false; 
+      return false;
     }
     const token = this.generateToken(user.id);
     return { id: user.id, token };
   }
-  
+
+
   async getUsers(): Promise<User[]> {
     const users = await this.userModel.find().exec();
     return users;
   }
 
+  async getUserById(id: string): Promise<User | undefined> {
+    const user = await this.userModel.findById(id).exec();
+    return user;
+  }
+
+  async deleteUserById(id: string): Promise<boolean> {
+    const deletedUser = await this.userModel.findByIdAndDelete(id).exec();
+    if (!deletedUser) {
+      throw new NotFoundException('User not found');
+    }
+    return true;
+  }
+
   async resetPassword(email: string, newPassword: string): Promise<boolean> {
     const user = await this.userModel.findOne({ email });
-  
+
     if (!user) {
-      return false; // User not found
-    }
-    else{
-        user.password = newPassword;
-        await user.save();
-        return true; // Password reset successful
+      return false;
+    } else {
+      user.password = newPassword;
+      await user.save();
+      return true;
     }
   }
-  
 
   private generateToken(userId: string): string {
     const secretKey = process.env.SECRET_KEY;
@@ -67,6 +79,4 @@ export class UserService {
     const token = jwt.sign({ userId }, secretKey, { expiresIn });
     return token;
   }
-
-
 }
