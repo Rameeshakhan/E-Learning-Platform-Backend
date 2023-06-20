@@ -11,12 +11,13 @@ export const UserSchema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   role: { type: String, enum: Object.values(UserRole), required: true },
+  token: { type: String }, 
 });
-
 export interface User extends mongoose.Document {
   id: string;
   name: string;
   email: string;
   password: string;
   role: UserRole;
+  token: string;
 }

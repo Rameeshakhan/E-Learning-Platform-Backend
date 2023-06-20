@@ -53,6 +53,11 @@ export class UserController {
 
   @Post('rP')
   async resetPass(@Body() body: any): Promise<any> {
-    await this.userService.resetPassword(body.email, body.password);
+    const passResetted = await this.userService.resetPassword(body.email, body.password);
+    if(passResetted){
+      return `Password Resetted Successful`
+    }else{
+      return `Error in password resetting`
+    }
   }
 }
