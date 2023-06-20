@@ -7,8 +7,7 @@ import { Model } from 'mongoose';
 export class RequestService {
   constructor(@InjectModel('Request') private readonly requestModel: Model<RequestModel>) {}
 
-  async createRequest(@Request() req: any, subject: string, description: string): Promise<RequestModel> {
-    const userId: string = req.user.id; 
+  async createRequest(userId: any, subject: string, description: string): Promise<RequestModel> {
     const newRequest = new this.requestModel({
       subject,
       description,
@@ -43,11 +42,12 @@ export class RequestService {
     return updatedRequest;
   }
 
-  async deleteRequest(requestId: string): Promise<boolean> {
+  async deleteRequest(requestId: string): Promise<string> {
     const deletedRequest = await this.requestModel.findByIdAndDelete(requestId).exec();
     if (!deletedRequest) {
       throw new NotFoundException('Request not found');
     }
-    return true;
+    return 'Request Deleted';
   }
+  
 }

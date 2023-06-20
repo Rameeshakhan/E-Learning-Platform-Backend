@@ -8,9 +8,13 @@ export class RequestController {
 
   @Post()
   async createRequest(@Body() body: any, @Req() req: any): Promise<Request> {
-    const userId: string = req.user.id;
-    const createdRequest = await this.requestService.createRequest(userId, body.subject, body.description);
-    return createdRequest;
+    const userID : string = req.body.userId; 
+    const createdRequest = await this.requestService.createRequest(userID, body.subject, body.description);
+    if(!createdRequest){
+         console.log(`Error Creating Request`)
+         return
+    }
+    return createdRequest
   }
 
   @Get()
