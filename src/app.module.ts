@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './users/user.module';
 import { RequestModule } from './Requests/request.module';
+import { ProposalModule } from "./Proposals/proposal.module"
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RequestModule } from './Requests/request.module';
    
     UserModule,
     RequestModule,
+    ProposalModule,
   ],
   controllers: [AppController],
   providers: [AppService],
