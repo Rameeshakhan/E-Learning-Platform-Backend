@@ -9,19 +9,20 @@ export class UserController {
   async userSignUp(@Body() body: any): Promise<any> {
     const signedUp = await this.userService.signUp(body.name, body.email, body.password, body.role);
     if (signedUp) {
-      return 'Successfully Signed Up';
+      return { success: true, message: 'Successfully Signed Up' };
     } else {
-      return 'Can\'t Sign Up, Email already exists';
+      return { success: false, message: 'Can\'t Sign Up, Email already exists' };
     }
   }
+  
 
   @Post('login')
-  async userLogin(@Body() body: any): Promise<string> {
+  async userLogin(@Body() body: any): Promise<any> {
     const isLoggedin = await this.userService.login(body.email, body.password);
     if (isLoggedin !== false) {
-      return 'Successfully logged in';
+      return { success: true, message: 'Successfully Logged in', user: isLoggedin };
     } else {
-      return 'Invalid email or password';
+      return { success: false, message: 'Invalid Credentials' };
     }
   }
 

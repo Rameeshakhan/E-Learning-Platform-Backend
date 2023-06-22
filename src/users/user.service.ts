@@ -9,6 +9,7 @@ export class UserService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
   async signUp(name: string, email: string, password: string, role: string) {
+    console.log("Signup Api hit")
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
       return false;
@@ -34,6 +35,7 @@ export class UserService {
 
   async login(email: string, password: string): Promise<boolean | { id: string; token: string }> {
     const user = await this.userModel.findOne({ email });
+    console.log("Login Api hit")
     if (!user || user.password !== password) {
       return false;
     }
@@ -45,10 +47,15 @@ export class UserService {
     return users;
   }
 
-  async getUserById(id: string): Promise<User | undefined> {
-    const user = await this.userModel.findById(id).exec();
-    return user;
+  async getUserById(id: string): Promise<User> {
+    try {
+      const user = await this.userModel.findById(id).exec();
+      return user;
+    } catch (error) {
+      throw new NotFoundException('User not found');
+    }
   }
+  
 
   async deleteUserById(id: string): Promise<boolean> {
     const deletedUser = await this.userModel.findByIdAndDelete(id).exec();

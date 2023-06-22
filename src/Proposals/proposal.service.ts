@@ -32,6 +32,7 @@ export class ProposalService {
   }
 
   async updateProposal(proposalId: string, amount: number, description: string) {
+    console.log("Update Proposal api hit")
     const updatedProposal = await this.proposalModel.findByIdAndUpdate(
       proposalId,
       { amount, description },
